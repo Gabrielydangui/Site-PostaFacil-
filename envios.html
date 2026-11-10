@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meus envios - PostaFácil</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="cabecalho" class="cabecalho"></header>
+  <main>
+    <h1>Meus envios</h1>
+
+    <div class="campo">
+      <label for="busca">Buscar código ou cidade</label>
+      <input id="busca" type="search" autocomplete="off">
+    </div>
+
+    <section class="cartao">
+      <ul id="lista" class="lista" aria-live="polite"></ul>
+    </section>
+  </main>
+  <nav id="nav" class="nav-inferior" aria-label="Navegação principal"></nav>
+
+  <script src="js/app.js"></script>
+  <script>
+    const usuario = Auth.exigirLogin();
+    if (usuario) {
+      montarCabecalho(usuario);
+      montarNavegacao("envios.html");
+
+      const todos = Envios.listar(usuario.email);
+      const lista = document.getElementById("lista");
+
+      function desenhar(filtro) {
+        const termo = filtro.trim().toLowerCase();
+        const itens = todos.filter((e) =>
+          e.codigo.toLowerCase().includes(termo) || e.destino.toLowerCase().includes(termo));
+        if (itens.length === 0) {
+          lista.innerHTML = '<li class="dica">' +
+            (todos.length === 0 ? "Nenhum envio ainda." : "Nada encontrado para essa busca.") + "</li>";
+          return;
+        }
+        lista.innerHTML = itens.map((e) =>
+          '<li class="envio"><div><div class="titulo">' + escaparHTML(e.destino) + " · " + escaparHTML(e.modalidade) +
+          '</div><div class="codigo">' + escaparHTML(e.codigo) + " · " + formatarReais(e.preco) +
+          "</div></div>" + seloStatus(e.status) + "</li>"
+        ).join("");
+      }
+
+      document.getElementById("busca").addEventListener("input", (ev) => desenhar(ev.target.value));
+      desenhar("");
+    }
+  </script>
+</body>
+</html>

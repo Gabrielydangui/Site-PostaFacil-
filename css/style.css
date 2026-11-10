@@ -1,0 +1,339 @@
+
+/* PostaFácil - Guia de estilo (Etapa 3) */
+:root {
+  --azul: #00468C;
+  --azul-escuro: #002F5F;
+  --amarelo: #FFC72C;
+  --texto: #1A1A1A;
+  --borda: #5F6B7A;
+  --sucesso: #1B7A3E;
+  --erro: #B3261E;
+  --fundo: #F5F7FA;
+  --branco: #FFFFFF;
+  --foco: #6B2FBF;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Atkinson Hyperlegible", Arial, sans-serif;
+  font-size: 1rem;
+  color: var(--texto);
+  background: var(--fundo);
+  line-height: 1.5;
+  padding-bottom: 88px;
+}
+
+h1 {
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+
+h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 24px 0 8px;
+}
+
+.dica {
+  font-size: 0.875rem;
+  color: var(--borda);
+}
+
+/* Cabecalho */
+.cabecalho {
+  background: var(--azul-escuro);
+  color: var(--branco);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cabecalho .marca {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.cabecalho button {
+  background: transparent;
+  color: var(--branco);
+  border: 2px solid var(--branco);
+  border-radius: 8px;
+  min-height: 48px;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+main {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Cartoes */
+.cartao {
+  background: var(--branco);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* Botoes */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 8px;
+  border: 2px solid var(--azul);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.btn-primario {
+  background: var(--azul);
+  color: var(--branco);
+}
+
+.btn-secundario {
+  background: var(--branco);
+  color: var(--azul);
+}
+
+.btn-destaque {
+  background: var(--amarelo);
+  color: var(--texto);
+  border-color: var(--amarelo);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Formularios */
+.campo {
+  margin-bottom: 16px;
+}
+
+.campo label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 2px solid var(--borda);
+  border-radius: 8px;
+  font: inherit;
+  background: var(--branco);
+  color: var(--texto);
+}
+
+.campo input[aria-invalid="true"],
+.campo select[aria-invalid="true"] {
+  border-color: var(--erro);
+}
+
+.erro {
+  color: var(--erro);
+  font-size: 0.875rem;
+  margin: 4px 0 0;
+  min-height: 1.25em;
+}
+
+.erro:not(:empty)::before {
+  content: "Erro: ";
+  font-weight: 700;
+}
+
+.alerta {
+  border: 2px solid var(--erro);
+  color: var(--erro);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.alerta[hidden] {
+  display: none;
+}
+
+/* Foco visivel */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 2px;
+}
+
+a {
+  color: var(--azul);
+  font-weight: 700;
+}
+
+/* Painel */
+.resumo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.resumo .item {
+  text-align: center;
+}
+
+.resumo .numero {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--azul);
+  display: block;
+}
+
+/* Lista de envios */
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.envio {
+  padding: 12px 0;
+  border-bottom: 1px solid #D5DAE1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.envio:last-child {
+  border-bottom: 0;
+}
+
+.envio .titulo {
+  font-weight: 700;
+}
+
+.envio .codigo {
+  font-size: 0.875rem;
+  color: var(--borda);
+}
+
+.selo {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border: 2px solid var(--borda);
+  color: var(--texto);
+  background: var(--branco);
+}
+
+.selo.entregue {
+  border-color: var(--sucesso);
+  color: var(--sucesso);
+}
+
+.selo.transito {
+  border-color: var(--azul);
+  color: var(--azul);
+}
+
+.selo.balcao {
+  border-color: var(--texto);
+  color: var(--texto);
+}
+
+/* Opcoes de modalidade */
+.opcao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px;
+  border: 2px solid var(--borda);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.opcao input {
+  width: 24px;
+  height: 24px;
+}
+
+.opcao:has(input:checked) {
+  border-color: var(--azul);
+  background: #E8F0FA;
+}
+
+.opcao .preco {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+/* Navegacao inferior (mobile-first) */
+.nav-inferior {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--branco);
+  border-top: 2px solid var(--borda);
+  display: flex;
+}
+
+.nav-inferior a {
+  flex: 1;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--azul);
+  font-weight: 700;
+}
+
+.nav-inferior a[aria-current="page"] {
+  background: var(--azul);
+  color: var(--branco);
+}
+
+/* Tabelas rolam dentro do cartao */
+.rolagem {
+  overflow-x: auto;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  main {
+    padding: 32px 16px;
+  }
+}
+

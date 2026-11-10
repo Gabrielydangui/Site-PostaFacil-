@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar - PostaFácil</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="cabecalho"><span class="marca">PostaFácil</span></header>
+  <main>
+    <h1>Entrar</h1>
+    <form id="form-login" class="cartao" novalidate>
+      <div id="alerta" class="alerta" role="alert" hidden></div>
+
+      <div class="campo">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" autocomplete="email" inputmode="email" required>
+        <p id="erro-email" class="erro" aria-live="polite"></p>
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input id="senha" type="password" autocomplete="current-password" required>
+        <p id="erro-senha" class="erro" aria-live="polite"></p>
+      </div>
+
+      <button type="submit" class="btn btn-primario">Entrar</button>
+      <a href="cadastro.html" class="btn btn-secundario">Criar conta</a>
+    </form>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    if (Auth.usuarioAtual()) window.location.href = "painel.html";
+
+    const form = document.getElementById("form-login");
+    const alerta = document.getElementById("alerta");
+
+    function mostrarErro(idCampo, idErro, msg) {
+      document.getElementById(idErro).textContent = msg;
+      document.getElementById(idCampo).setAttribute("aria-invalid", msg ? "true" : "false");
+    }
+
+    form.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      alerta.hidden = true;
+      const email = document.getElementById("email").value.trim();
+      const senha = document.getElementById("senha").value;
+
+      mostrarErro("email", "erro-email", validarEmail(email) ? "" : "Informe um e-mail válido.");
+      mostrarErro("senha", "erro-senha", senha ? "" : "Informe sua senha.");
+      if (!validarEmail(email) || !senha) return;
+
+      const r = await Auth.entrar(email, senha);
+      if (!r.ok) {
+        alerta.textContent = r.erro;
+        alerta.hidden = false;
+        return;
+      }
+      window.location.href = "painel.html";
+    });
+  </script>
+</body>
+</html>

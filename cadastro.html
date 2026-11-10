@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Criar conta - PostaFácil</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="cabecalho"><span class="marca">PostaFácil</span></header>
+  <main>
+    <h1>Criar conta</h1>
+    <form id="form-cadastro" class="cartao" novalidate>
+      <div id="alerta" class="alerta" role="alert" hidden></div>
+
+      <div class="campo">
+        <label for="nome">Nome</label>
+        <input id="nome" type="text" autocomplete="name" required>
+        <p id="erro-nome" class="erro" aria-live="polite"></p>
+      </div>
+
+      <div class="campo">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" autocomplete="email" inputmode="email" required>
+        <p id="erro-email" class="erro" aria-live="polite"></p>
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input id="senha" type="password" autocomplete="new-password" required>
+        <p class="dica">Mínimo de 8 caracteres, com letras e números.</p>
+        <p id="erro-senha" class="erro" aria-live="polite"></p>
+      </div>
+
+      <div class="campo">
+        <label for="confirma">Confirmar senha</label>
+        <input id="confirma" type="password" autocomplete="new-password" required>
+        <p id="erro-confirma" class="erro" aria-live="polite"></p>
+      </div>
+
+      <button type="submit" class="btn btn-primario">Cadastrar</button>
+      <a href="index.html" class="btn btn-secundario">Já tenho conta</a>
+    </form>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    const form = document.getElementById("form-cadastro");
+    const alerta = document.getElementById("alerta");
+
+    function mostrarErro(campo, msg) {
+      document.getElementById("erro-" + campo).textContent = msg;
+      document.getElementById(campo).setAttribute("aria-invalid", msg ? "true" : "false");
+      return !msg;
+    }
+
+    form.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      alerta.hidden = true;
+      const nome = document.getElementById("nome").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const senha = document.getElementById("senha").value;
+      const confirma = document.getElementById("confirma").value;
+
+      const validos = [
+        mostrarErro("nome", nome.length >= 2 ? "" : "Informe seu nome."),
+        mostrarErro("email", validarEmail(email) ? "" : "Informe um e-mail válido."),
+        mostrarErro("senha", validarSenha(senha)),
+        mostrarErro("confirma", senha === confirma ? "" : "As senhas não são iguais."),
+      ];
+      if (validos.includes(false)) return;
+
+      const r = await Auth.cadastrar(nome, email, senha);
+      if (!r.ok) {
+        alerta.textContent = r.erro;
+        alerta.hidden = false;
+        return;
+      }
+      await Auth.entrar(email, senha);
+      window.location.href = "painel.html";
+    });
+  </script>
+</body>
+</html>

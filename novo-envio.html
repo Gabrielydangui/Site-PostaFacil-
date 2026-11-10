@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Novo envio - PostaFácil</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="cabecalho" class="cabecalho"></header>
+  <main>
+    <h1>Novo envio</h1>
+
+    <form id="form-envio" class="cartao" novalidate>
+      <div class="campo">
+        <label for="cidade">Cidade de destino</label>
+        <input id="cidade" type="text" autocomplete="off" required>
+        <p id="erro-cidade" class="erro" aria-live="polite"></p>
+      </div>
+
+      <div class="campo">
+        <label for="uf">Estado</label>
+        <select id="uf" required>
+          <option value="">Selecione</option>
+        </select>
+        <p id="erro-uf" class="erro" aria-live="polite"></p>
+      </div>
+
+      <div class="campo">
+        <label for="peso">Peso (g)</label>
+        <input id="peso" type="number" inputmode="numeric" min="1" max="30000" placeholder="Ex.: 800" required>
+        <p id="erro-peso" class="erro" aria-live="polite"></p>
+      </div>
+
+      <button type="submit" class="btn btn-primario">Simular preço e prazo</button>
+    </form>
+
+    <section id="resultado" class="cartao" hidden>
+      <h2>Escolha a modalidade</h2>
+      <div id="opcoes" role="radiogroup" aria-label="Modalidades"></div>
+      <p id="erro-modalidade" class="erro" aria-live="polite"></p>
+      <button type="button" id="btn-confirmar" class="btn btn-destaque">Confirmar envio</button>
+    </section>
+  </main>
+  <nav id="nav" class="nav-inferior" aria-label="Navegação principal"></nav>
+
+  <script src="js/app.js"></script>
+  <script>
+    const usuario = Auth.exigirLogin();
+    if (usuario) {
+      montarCabecalho(usuario);
+      montarNavegacao("novo-envio.html");
+
+      const ufs = Object.values(REGIOES).flat().sort();
+      document.getElementById("uf").insertAdjacentHTML("beforeend",
+        ufs.map((u) => '<option value="' + u + '">' + u + "</option>").join(""));
+
+      let opcoesAtuais = [];
+      let dadosAtuais = null;
+
+      function mostrarErro(campo, msg) {
+        document.getElementById("erro-" + campo).textContent = msg;
+        const el = document.getElementById(campo);
+        if (el) el.setAttribute("aria-invalid", msg ? "true" : "false");
+        return !msg;
+      }
+
+      document.getElementById("form-envio").addEventListener("submit", (ev) => {
+        ev.preventDefault();
+        const cidade = document.getElementById("cidade").value.trim();
+        const uf = document.getElementById("uf").value;
+        const peso = Number(document.getElementById("peso").value);
+
+        const validos = [
+          mostrarErro("cidade", cidade ? "" : "Informe a cidade de destino."),
+          mostrarErro("uf", uf ? "" : "Selecione o estado."),
+          mostrarErro("peso", peso >= 1 && peso <= 30000 ? "" : "Informe o peso em gramas (1 a 30000)."),
+        ];
+        if (validos.includes(false)) return;
+
+        dadosAtuais = { cidade, uf, peso };
+        opcoesAtuais = simularEnvio(uf, peso);
+        document.getElementById("opcoes").innerHTML = opcoesAtuais.map((o, i) =>
+          '<label class="opcao"><input type="radio" name="modalidade" value="' + o.id + '"' + (i === 0 ? " required" : "") + ">" +
+          "<span>" + o.nome + " · até " + o.dias + (o.dias === 1 ? " dia" : " dias") + "</span>" +
+          '<span class="preco">' + formatarReais(o.preco) + "</span></label>"
+        ).join("");
+        document.getElementById("resultado").hidden = false;
+        document.getElementById("resultado").scrollIntoView({ behavior: "smooth" });
+      });
+
+      document.getElementById("btn-confirmar").addEventListener("click", () => {
+        const marcada = document.querySelector('input[name="modalidade"]:checked');
+        if (!marcada) {
+          document.getElementById("erro-modalidade").textContent = "Escolha uma modalidade.";
+          return;
+        }
+        const escolha = opcoesAtuais.find((o) => o.id === marcada.value);
+        Envios.adicionar({
+          email: usuario.email,
+          codigo: Envios.gerarCodigo(),
+          destino: dadosAtuais.cidade + "/" + dadosAtuais.uf,
+          modalidade: escolha.nome,
+          preco: escolha.preco,
+          peso: dadosAtuais.peso,
+          status: "Pronto p/ balcão",
+          data: new Date().toISOString(),
+        });
+        window.location.href = "envios.html";
+      });
+    }
+  </script>
+</body>
+</html>

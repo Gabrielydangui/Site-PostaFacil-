@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel - PostaFácil</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="cabecalho" class="cabecalho"></header>
+  <main>
+    <h1 id="saudacao">Olá!</h1>
+
+    <section class="cartao resumo" aria-label="Resumo">
+      <div class="item"><span id="total" class="numero">0</span>envios</div>
+      <div class="item"><span id="gasto" class="numero">R$ 0,00</span>gasto total</div>
+    </section>
+
+    <a href="novo-envio.html" class="btn btn-destaque">+ Preparar novo envio</a>
+
+    <h2>Últimos envios</h2>
+    <section class="cartao">
+      <ul id="ultimos" class="lista"></ul>
+    </section>
+  </main>
+  <nav id="nav" class="nav-inferior" aria-label="Navegação principal"></nav>
+
+  <script src="js/app.js"></script>
+  <script>
+    const usuario = Auth.exigirLogin();
+    if (usuario) {
+      montarCabecalho(usuario);
+      montarNavegacao("painel.html");
+      document.getElementById("saudacao").textContent = "Olá, " + usuario.nome.split(" ")[0] + "!";
+
+      const envios = Envios.listar(usuario.email);
+      document.getElementById("total").textContent = envios.length;
+      document.getElementById("gasto").textContent =
+        formatarReais(envios.reduce((soma, e) => soma + e.preco, 0));
+
+      const lista = document.getElementById("ultimos");
+      if (envios.length === 0) {
+        lista.innerHTML = '<li class="dica">Você ainda não tem envios. Comece preparando o primeiro!</li>';
+      } else {
+        lista.innerHTML = envios.slice(0, 3).map((e) =>
+          '<li class="envio"><div><div class="titulo">' + escaparHTML(e.destino) + " · " + escaparHTML(e.modalidade) +
+          "</div></div>" + seloStatus(e.status) + "</li>"
+        ).join("");
+      }
+    }
+  </script>
+</body>
+</html>
